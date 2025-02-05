@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer;
 
-public partial class jayzenContext : DbContext
+public partial class JayzenContext : DbContext
 {
-    public jayzenContext(DbContextOptions<jayzenContext> options)
+    public JayzenContext(DbContextOptions<JayzenContext> options)
         : base(options)
     {
     }
