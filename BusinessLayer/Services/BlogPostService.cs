@@ -123,7 +123,7 @@ namespace BusinessLayer.Services
         public async Task<IEnumerable<BlogPostResponseDto>> GetBlogPostByTag(string tag)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(tag), "Tag must not be null or empty");
-            
+
             var blogPosts = await _blogPostRepository.GetPostByTagAsync(tag);
 
             var mapper = autoMapperConfig.CreateMapper();
