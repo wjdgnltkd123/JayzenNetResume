@@ -28,26 +28,30 @@ namespace DataAccessLayer.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<T> AddAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
+            var entityEntry = await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
+            return entityEntry.Entity;
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public async Task DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(long id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
+                return true;
             }
+            return false;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace BusinessLayer.DTOs
 {
     public class BlogPostRequestDto
     {
-        public required string Name { get; set; }
+        public long Id { get; set; }
         public required string Email { get; set; }
         public required string Title { get; set; }
         public required string Content { get; set; }

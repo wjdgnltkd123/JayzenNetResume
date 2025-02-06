@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repositories
 {
-    internal class BlogRepository : Repository<BlogPost>, IBlogPostRepository
+    public class BlogPostRepository : Repository<BlogPost>, IBlogPostRepository
     {
         private readonly JayzenContext _context;
-        public BlogRepository(JayzenContext context) : base(context)
+        public BlogPostRepository(JayzenContext context) : base(context)
         {
             _context = context;
         }
