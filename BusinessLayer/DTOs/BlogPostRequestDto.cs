@@ -12,6 +12,6 @@ namespace BusinessLayer.DTOs
         public required string Email { get; set; }
         public required string Title { get; set; }
         public required string Content { get; set; }
-        public required ICollection<string> BlogPostTags { get; set; }
+        public required ICollection<TagDto> BlogPostTags { get; set; }
     }
 }

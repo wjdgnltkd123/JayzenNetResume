@@ -8,6 +8,7 @@ using DataAccessLayer.Repositories;
 using System.Diagnostics;
 using DataAccessLayer.Models;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace BusinessLayer.Services
 {
@@ -18,23 +19,26 @@ namespace BusinessLayer.Services
         private readonly ITagRepository _tagRepository;
         private readonly IBlogPostTagRepository _blogPostTagRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        private readonly MapperConfiguration autoMapperConfig = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<BlogPost, BlogPostResponseDto>()
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
-            .ForMember(dest => dest.BlogPostTags, opt => opt.MapFrom(src => src.BlogPostTags.Select(x => x.Tag.Name)))
-            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
-        });
 
-        public BlogPostService(IBlogPostRepository blogPostRepository, IUserRepository userRepository, ITagRepository tagRepository, IBlogPostTagRepository blogPostTagRepository, IUnitOfWork unitOfWork)
+        //private readonly MapperConfiguration autoMapperConfig = new MapperConfiguration(cfg =>
+        //{
+        //    cfg.CreateMap<BlogPost, BlogPostResponseDto>()
+        //    .ForMember(dest => dest.BlogPostTags, opt => opt.MapFrom(src => src.BlogPostTags.Select(x => x.Tag.Name)))
+        //    .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
+        //});
+
+        public BlogPostService(IBlogPostRepository blogPostRepository, IUserRepository userRepository, ITagRepository tagRepository, IBlogPostTagRepository blogPostTagRepository, IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
         {
             _blogPostRepository = blogPostRepository;
             _userRepository = userRepository;
             _tagRepository = tagRepository;
             _blogPostTagRepository = blogPostTagRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task AddAsync(BlogPostRequestDto blogPostRequest)
@@ -64,12 +68,12 @@ namespace BusinessLayer.Services
                 Debug.Assert(blogPost.Id > 0, "BlogPost Id must be greater than 0");
 
                 blogPost.BlogPostTags = new List<BlogPostTag>();
-                foreach (var tagName in blogPostRequest.BlogPostTags)
+                foreach (var tagDto in blogPostRequest.BlogPostTags)
                 {
-                    var tag = await _tagRepository.GetByNameAsync(tagName);
+                    var tag = await _tagRepository.GetByNameAsync(tagDto.Name);
                     if (tag == null)
                     {
-                        tag = new Tag { Name = tagName };
+                        tag = _mapper.Map<Tag>(tagDto);
                         await _tagRepository.AddAsync(tag);
                         Debug.Assert(tag.Id > 0, "Tag Id must be greater than 0");
                         blogPost.BlogPostTags.Add(new BlogPostTag { PostId = blogPost.Id, TagId = tag.Id, Post = blogPost, Tag = tag });
@@ -86,7 +90,7 @@ namespace BusinessLayer.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "An error occurred while adding a blog post");
                 Debug.Assert(false, "An error occurred while adding a blog post");
                 await _unitOfWork.RollbackTransactionAsync();
             }
@@ -103,7 +107,7 @@ namespace BusinessLayer.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.Message);
+                _logger.LogError(ex, "An error occurred while deleting a blog post");
                 Debug.Assert(false, "An error occurred while deleting a blog post");
                 await _unitOfWork.RollbackTransactionAsync();
             }
@@ -112,11 +116,11 @@ namespace BusinessLayer.Services
 
         public async Task<IEnumerable<BlogPostResponseDto>> GetAllAsync()
         {
-            var mapper = autoMapperConfig.CreateMapper();
+            //var mapper = autoMapperConfig.CreateMapper();
 
             var blogPosts = await _blogPostRepository.GetAllAsync();
 
-            var blogPostResponseDtos = mapper.Map<IEnumerable<BlogPostResponseDto>>(blogPosts);
+            var blogPostResponseDtos = _mapper.Map<IEnumerable<BlogPostResponseDto>>(blogPosts);
             return blogPostResponseDtos;
         }
 
@@ -126,8 +130,7 @@ namespace BusinessLayer.Services
 
             var blogPosts = await _blogPostRepository.GetPostByTagAsync(tag);
 
-            var mapper = autoMapperConfig.CreateMapper();
-            var blogPostResponseDtos = mapper.Map<IEnumerable<BlogPostResponseDto>>(blogPosts);
+            var blogPostResponseDtos = _mapper.Map<IEnumerable<BlogPostResponseDto>>(blogPosts);
             return blogPostResponseDtos;
         }
 
@@ -142,9 +145,8 @@ namespace BusinessLayer.Services
                 return null;
             }
 
-            var mapper = autoMapperConfig.CreateMapper();
 
-            var blogPostResponseDto = mapper.Map<BlogPostResponseDto>(blogPost);
+            var blogPostResponseDto = _mapper.Map<BlogPostResponseDto>(blogPost);
             return blogPostResponseDto;
         }
 
@@ -162,9 +164,8 @@ namespace BusinessLayer.Services
                 throw new ArgumentException("BlogPost not found", nameof(blogPostRequest));
             }
 
-            var mapper = autoMapperConfig.CreateMapper();
 
-            mapper.Map(blogPostRequest, blogPost);
+            blogPost = _mapper.Map(blogPostRequest, blogPost);
 
             await _blogPostRepository.UpdateAsync(blogPost);
         }
