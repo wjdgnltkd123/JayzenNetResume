@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Repositories
 {
-    internal class BlogPostTagRepository : Repository<BlogPostTag>, IBlogPostTagRepository
+    public class BlogPostTagRepository : Repository<BlogPostTag>, IBlogPostTagRepository
     {
         private readonly JayzenContext _context;
         public BlogPostTagRepository(JayzenContext context) : base(context)

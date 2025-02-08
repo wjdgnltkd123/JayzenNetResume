@@ -20,7 +20,7 @@ namespace BusinessLayer.Services
         private readonly IBlogPostTagRepository _blogPostTagRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<BlogPostService> _logger;
 
 
         //private readonly MapperConfiguration autoMapperConfig = new MapperConfiguration(cfg =>
@@ -30,7 +30,7 @@ namespace BusinessLayer.Services
         //    .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
         //});
 
-        public BlogPostService(IBlogPostRepository blogPostRepository, IUserRepository userRepository, ITagRepository tagRepository, IBlogPostTagRepository blogPostTagRepository, IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
+        public BlogPostService(IBlogPostRepository blogPostRepository, IUserRepository userRepository, ITagRepository tagRepository, IBlogPostTagRepository blogPostTagRepository, IUnitOfWork unitOfWork, IMapper mapper, ILogger<BlogPostService> logger)
         {
             _blogPostRepository = blogPostRepository;
             _userRepository = userRepository;

@@ -12,15 +12,20 @@ builder.Services.AddDbContext<JayzenContext>(options =>
     new MySqlServerVersion(new Version(11, 4, 2))));
 //builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
+builder.Services.AddScoped<IBlogPostTagRepository, BlogPostTagRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBlogPostService, BlogPostService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddLogging();
+
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
@@ -29,6 +34,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

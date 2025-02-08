@@ -1,0 +1,13 @@
+﻿@using BusinessLayer.DTOs
+@{
+    ViewBag.Title = "User List";
+    var users = ViewBag.Users as IEnumerable<UserResponseDto>;
+}
+
+<h1>User List</h1>
+<ul>
+    @foreach (var item in users)
+    {
+        <li>@item.Name</li>
+    }
+</ul>
