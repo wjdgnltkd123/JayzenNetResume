@@ -13,8 +13,7 @@ namespace BusinessLayer.DTOs
     {
         public long Id { get; set; }
 
-        public required string Name { get; set; }
-        public required string Email { get; set; }
+        public required UserSimplestDto User { get; set; }
 
         public required string Title { get; set; }
 
@@ -23,7 +22,7 @@ namespace BusinessLayer.DTOs
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
-        public required ICollection<string> BlogPostTags { get; set; }
+        public required ICollection<TagDto> BlogPostTags { get; set; }
 
         public required ICollection<CommentResponseDto> Comments { get; set; }
     }
