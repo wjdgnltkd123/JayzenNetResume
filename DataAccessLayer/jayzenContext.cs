@@ -29,6 +29,7 @@ public partial class JayzenContext : DbContext
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Experience> Experiences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -106,6 +107,20 @@ public partial class JayzenContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Projects)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_project_user");
+        });
+
+        modelBuilder.Entity<Experience>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("current_timestamp()");
+            entity.Property(e => e.UpdatedAt)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("current_timestamp()");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Experiences)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_experience_user");
         });
 
         modelBuilder.Entity<ProjectTag>(entity =>

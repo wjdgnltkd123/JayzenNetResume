@@ -27,6 +27,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "experience",
+         "ObjectType": 0
+      },
+      {
          "Name": "oauth_account",
          "ObjectType": 0
       },

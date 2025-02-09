@@ -54,6 +54,9 @@ public partial class User
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     [InverseProperty("User")]
+    public virtual ICollection<Experience> Experiences { get; set; } = new List<Experience>();
+
+    [InverseProperty("User")]
     public virtual ICollection<OauthAccount> OauthAccounts { get; set; } = new List<OauthAccount>();
 
     [InverseProperty("User")]

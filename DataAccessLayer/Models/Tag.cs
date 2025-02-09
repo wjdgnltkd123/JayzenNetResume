@@ -20,11 +20,6 @@ public partial class Tag
     [StringLength(50)]
     public string Name { get; set; }
 
-    //[Required]
-    //[Column("description")]
-    //[StringLength(255)]
-    //public string Description { get; set; }
-
     [InverseProperty("Tag")]
     public virtual ICollection<BlogPostTag> BlogPostTags { get; set; } = new List<BlogPostTag>();
 
