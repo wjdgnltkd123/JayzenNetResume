@@ -24,5 +24,8 @@ public partial class Tag
     public virtual ICollection<BlogPostTag> BlogPostTags { get; set; } = new List<BlogPostTag>();
 
     [InverseProperty("Tag")]
+    public virtual ICollection<ExperienceTag> ExperienceTags { get; set; } = new List<ExperienceTag>();
+
+    [InverseProperty("Tag")]
     public virtual ICollection<ProjectTag> ProjectTags { get; set; } = new List<ProjectTag>();
 }

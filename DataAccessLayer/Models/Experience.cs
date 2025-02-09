@@ -44,6 +44,9 @@ public partial class Experience
     [Column("updated_at", TypeName = "datetime")]
     public DateTime UpdatedAt { get; set; }
 
+    [InverseProperty("Experience")]
+    public virtual ICollection<ExperienceTag> ExperienceTags { get; set; } = new List<ExperienceTag>();
+
     [ForeignKey("UserId")]
     [InverseProperty("Experiences")]
     public virtual User User { get; set; }

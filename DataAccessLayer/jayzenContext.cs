@@ -20,6 +20,10 @@ public partial class JayzenContext : DbContext
 
     public virtual DbSet<Comment> Comments { get; set; }
 
+    public virtual DbSet<Experience> Experiences { get; set; }
+
+    public virtual DbSet<ExperienceTag> ExperienceTags { get; set; }
+
     public virtual DbSet<OauthAccount> OauthAccounts { get; set; }
 
     public virtual DbSet<Project> Projects { get; set; }
@@ -29,7 +33,6 @@ public partial class JayzenContext : DbContext
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<Experience> Experiences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,6 +84,33 @@ public partial class JayzenContext : DbContext
                 .HasConstraintName("FK_comment_member");
         });
 
+        modelBuilder.Entity<Experience>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("current_timestamp()");
+            entity.Property(e => e.UpdatedAt)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("current_timestamp()");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Experiences)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_experience_user");
+        });
+
+        modelBuilder.Entity<ExperienceTag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.HasOne(d => d.Experience).WithMany(p => p.ExperienceTags)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__experience");
+
+            entity.HasOne(d => d.Tag).WithMany(p => p.ExperienceTags)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__tag");
+        });
+
         modelBuilder.Entity<OauthAccount>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -107,20 +137,6 @@ public partial class JayzenContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Projects)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_project_user");
-        });
-
-        modelBuilder.Entity<Experience>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("current_timestamp()");
-            entity.Property(e => e.UpdatedAt)
-                .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValueSql("current_timestamp()");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Experiences)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_experience_user");
         });
 
         modelBuilder.Entity<ProjectTag>(entity =>
